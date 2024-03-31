@@ -1,0 +1,8 @@
+﻿<DbtrAcct>
+	<Id>
+		<Othr>
+			<Id>{{DebitorAccountNo}}</Id>
+		</Othr>
+	</Id>
+	<Ccy>{{INR}}</Ccy>
+</DbtrAcct>

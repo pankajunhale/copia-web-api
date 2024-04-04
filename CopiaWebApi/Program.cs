@@ -16,6 +16,8 @@ builder.Services.AddDbContext<PaybrijDbContext>(options =>
     options.UseSqlite("Data Source=Reference.db;Mode=ReadWriteCreate"));
 
 builder.Services.AddScoped<InputFileService, InputFileService>();
+builder.Services.AddScoped<OutputFileService, OutputFileService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

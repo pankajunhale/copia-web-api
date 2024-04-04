@@ -12,7 +12,7 @@ namespace CopiaWebApi.Services
             _dbContext = context;
         }
 
-        public async Task<ActionResult<IEnumerable<InputFile>>> GetInputFiles()
+        public async Task<IEnumerable<InputFile>> GetInputFiles()
         {
             return await _dbContext.InputFiles.ToListAsync();
         }

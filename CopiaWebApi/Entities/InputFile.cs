@@ -12,6 +12,9 @@ namespace CopiaWebApi.Entities
         public int Index { get; set; }
         public bool IsHeader { get; set; }
 
+        public InputOutputMapper InputOutputMappers { get; set; }
 
     }
 }
+
+

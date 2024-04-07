@@ -9,6 +9,6 @@ namespace CopiaWebApi.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string? TagName { get; set; }
-
+        public InputOutputMapper InputOutputMappers { get; set; } = new InputOutputMapper();
     }
 }

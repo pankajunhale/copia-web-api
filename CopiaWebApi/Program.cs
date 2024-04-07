@@ -17,6 +17,7 @@ builder.Services.AddDbContext<PaybrijDbContext>(options =>
 
 builder.Services.AddScoped<InputFileService, InputFileService>();
 builder.Services.AddScoped<OutputFileService, OutputFileService>();
+builder.Services.AddScoped<MapperService, MapperService>();
 
 var app = builder.Build();
 
@@ -32,7 +33,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapTodoEndpoints();
 
 app.Run();

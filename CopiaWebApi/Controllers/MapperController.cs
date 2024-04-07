@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.OpenApi;
 using CopiaWebApi.Models;
 using Humanizer;
 using System.Data;
+using CopiaWebApi.Services;
+using CopiaWebApi.Entities;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,11 +15,19 @@ namespace CopiaWebApi.Controllers
     [ApiController]
     public class MapperController : ControllerBase
     {
+        private readonly MapperService _service;
+
+        public MapperController(MapperService mapperService)
+        {
+            _service = mapperService;
+        }
+
         // GET: api/<ValuesController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<List<InputOutputMapper>>> Get()
         {
-            return new string[] { "value1", this.GenerateHeader("dfdf") };
+            var data = await _service.GetAll();
+            return Ok(data);
         }
 
         private string GenerateHeader(string profileId)
@@ -32,6 +42,7 @@ namespace CopiaWebApi.Controllers
 		        <GrpHdr>
 			        <MsgId>" + msgId + @"</MsgId>
 			        <CreDtTm>" + creDtm + @"</CreDtTm>
+                    <AccNum-xml>" + this.FindOutputTagValueByName("AccNum-xml") + @"</CreDtTm>
 			        <Authstn>
 				        <Cd>ILEV</Cd>
 			        </Authstn>
@@ -50,72 +61,93 @@ namespace CopiaWebApi.Controllers
             return xml;
         }
 
+        // exl file
+        // read row from exl and insert into InputFileDataModel
+        // list<InputFileDataModel>
+        private string FindOutputTagValueByName(string tag)
+        {
+            // 1
+            // outputfile data
+            // from tagname -> outputfile.tagName == tag -- no duplicate
+            // res {id (PK), tagName}
+
+            // 2
+            // from inputoutputmapper where outfieldId = id
+            // mapperRes {id, inputfileId, outputFileId=>id}
+
+            // 3
+            // inputfile 
+            // from where id == inputfileId
+            // inputfileRes {id, index, name, isRequired} // account_number
+
+            // 4
+            // input file -> exl sheet data
+            // read file
+            // for loop
+            // row [1, 'abcd', 60000] -> generateXML([1, 'abcd', 60000]) old
+            // row [1, 'abcd', 60000] -> generateXML(
+            // [{ index: 1, HeaderName: 'account_number', value: 60000}
+            //{ index: 1, HeaderName: 'f'}
+            //{ index: 1, HeaderName: 'd'}
+            //{ index: 1, HeaderName: 'g'}
+            //{ index: 1, HeaderName: 'g'}
+            //{ index: 1, HeaderName: 'f'}
+
+            // }]) new
+
+            var inputDataRow = new List<InputFileDataModel>
+            {
+                new InputFileDataModel(2, "Component", "InputMapper"),
+                new InputFileDataModel(3, "label", "a")
+            };
+            ///inputDataRow.Add(new InputFileDataModel(2, "Component", "InputMapper"));
+            ///
+            return "";
+        }
+
+        private void FindOutputTagInfoByName(string name)
+        {
+            // sql query
+
+        }
+
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<InputOutputMapper>> Get(int id)
         {
-            return "value";
+            var data = await _service.GetInfoById(id);
+            if (data == null)
+            {
+                return NotFound();
+            }
+            return Ok(data);
         }
 
         // POST api/<ValuesController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post(InputOutputMapper data)
         {
+            await _service.Create(data);
+            return Created();
         }
 
         // PUT api/<ValuesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id,InputOutputMapper data)
         {
+            if (id == 0) { return BadRequest(); }
+            if (id != data.Id) { return BadRequest(); }
+            await _service.Update(data);
+            return Ok();
         }
 
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            await _service.Delete(id);
+            return NoContent();
         }
     }
+}
 
-
-public static class TodoEndpoints
-{
-	public static void MapTodoEndpoints (this IEndpointRouteBuilder routes)
-    {
-        var group = routes.MapGroup("/api/Todo").WithTags(nameof(Todo));
-
-        group.MapGet("/", () =>
-        {
-            return new [] { new Todo() };
-        })
-        .WithName("GetAllTodos")
-        .WithOpenApi();
-
-        group.MapGet("/{id}", (int id) =>
-        {
-            //return new Todo { ID = id };
-        })
-        .WithName("GetTodoById")
-        .WithOpenApi();
-
-        group.MapPut("/{id}", (int id, Todo input) =>
-        {
-            return TypedResults.NoContent();
-        })
-        .WithName("UpdateTodo")
-        .WithOpenApi();
-
-        group.MapPost("/", (Todo model) =>
-        {
-            //return TypedResults.Created($"/api/Todos/{model.ID}", model);
-        })
-        .WithName("CreateTodo")
-        .WithOpenApi();
-
-        group.MapDelete("/{id}", (int id) =>
-        {
-            //return TypedResults.Ok(new Todo { ID = id });
-        })
-        .WithName("DeleteTodo")
-        .WithOpenApi();
-    }
-}}

@@ -16,5 +16,6 @@ namespace CopiaWebApi.Db
 
         public DbSet<InputFile> InputFiles { get; set; }
         public DbSet<OutputFile> OutputFiles { get; set; }
+        public DbSet<InputOutputMapper> InputOutputMappers { get; set; }
     }
 }

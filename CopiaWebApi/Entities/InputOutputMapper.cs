@@ -14,8 +14,8 @@ namespace CopiaWebApi.Entities
         public int OutputFileId { get; set; }
 
         //Navigation Property
-        public InputFile InputFiles { get; }
-        public OutputFile OutputFiles { get; }
+        public InputFile? InputFile { get; }
+        public OutputFile? OutputFile { get; }
 
     }
 }

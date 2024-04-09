@@ -2,7 +2,6 @@
 using CopiaWebApi.Entities;
 using CopiaWebApi.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
 
 namespace CopiaWebApi.Services
 {
@@ -37,7 +36,6 @@ namespace CopiaWebApi.Services
                                TagName = o.TagName
                            }
                            ).ToListAsync();
-            //return await _dbContext.InputOutputMappers.ToListAsync();
             return q;
         }
 

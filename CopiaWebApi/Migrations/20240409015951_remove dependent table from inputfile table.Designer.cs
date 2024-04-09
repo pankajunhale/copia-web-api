@@ -2,6 +2,7 @@
 using CopiaWebApi.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CopiaWebApi.Migrations
 {
     [DbContext(typeof(PaybrijDbContext))]
-    partial class PaybrijDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240409015951_remove dependent table from inputfile table")]
+    partial class removedependenttablefrominputfiletable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -50,6 +53,9 @@ namespace CopiaWebApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OutputFileId")
+                        .IsUnique();
+
                     b.ToTable("InputOutputMappers");
                 });
 
@@ -65,6 +71,21 @@ namespace CopiaWebApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("OutputFiles");
+                });
+
+            modelBuilder.Entity("CopiaWebApi.Entities.InputOutputMapper", b =>
+                {
+                    b.HasOne("CopiaWebApi.Entities.OutputFile", null)
+                        .WithOne("InputOutputMappers")
+                        .HasForeignKey("CopiaWebApi.Entities.InputOutputMapper", "OutputFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CopiaWebApi.Entities.OutputFile", b =>
+                {
+                    b.Navigation("InputOutputMappers")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

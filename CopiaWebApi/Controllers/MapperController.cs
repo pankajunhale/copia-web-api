@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.OpenApi;
 using CopiaWebApi.Models;
-using Humanizer;
-using System.Data;
 using CopiaWebApi.Services;
 using CopiaWebApi.Entities;
 
@@ -11,7 +7,7 @@ using CopiaWebApi.Entities;
 
 namespace CopiaWebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/mapper")]
     [ApiController]
     public class MapperController : ControllerBase
     {
@@ -23,43 +19,14 @@ namespace CopiaWebApi.Controllers
         }
 
         // GET: api/<ValuesController>
-        [HttpGet]
+        [HttpGet]        
         public async Task<ActionResult<List<InputOutputMapper>>> Get()
         {
             var data = await _service.GetAll();
             return Ok(data);
         }
 
-        private string GenerateHeader(string profileId)
-        {
-            var msgId = DateTime.Now.ToString("yyyyMMddTHHmmssfff");
-            string creDtm = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss:fff");
-            int noOfTrans = 10;
-
-            var xml = @"<?xml version='1.0' encoding='UTF-8'?>
-            <Document xmlns='urn:iso:std:iso:20022:tech:xsd:pain.001.001.03' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
-	        <CstmrCdtTrfInitn>
-		        <GrpHdr>
-			        <MsgId>" + msgId + @"</MsgId>
-			        <CreDtTm>" + creDtm + @"</CreDtTm>
-                    <AccNum-xml>" + this.FindOutputTagValueByName("AccNum-xml") + @"</CreDtTm>
-			        <Authstn>
-				        <Cd>ILEV</Cd>
-			        </Authstn>
-			        <NbOfTxs>" + noOfTrans + @"</NbOfTxs>
-			        <InitgPty>
-				        <Id>
-					        <OrgId>
-						        <Othr>
-							        <Id>" + profileId + @"</Id>
-						        </Othr>
-					        </OrgId>
-				        </Id>
-			        </InitgPty>
-		        </GrpHdr>
-            <CstmrCdtTrfInitn>";
-            return xml;
-        }
+        
 
         // exl file
         // read row from exl and insert into InputFileDataModel
